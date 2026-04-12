@@ -1,0 +1,359 @@
+/* Unfold AI — injected UI.
+   Design: clean, product-quality, blue gradient. Decidedly NOT an "AI tool".
+   Feels like a thoughtful browser extension from a serious software company.
+   Full light + dark mode support. */
+
+/* ── Design tokens (dark-first) ──────────────────────────────────── */
+/* Tokens on :root so reveal bar (sibling of contentRoot) can use them */
+:root {
+  --lar-fg-mute:      rgba(232, 236, 244, 0.42);
+  --lar-blue:         #5b8cf7;
+  --lar-blue-light:   #7ea8ff;
+  --lar-blue-soft:    rgba(91, 140, 247, 0.12);
+  --lar-blue-glow:    rgba(91, 140, 247, 0.28);
+  --lar-border-mid:   rgba(120, 160, 255, 0.16);
+  --lar-btn-primary-from: #4c7ef5;
+  --lar-btn-primary-to:   #2d5fd4;
+  --lar-fg-dim:       rgba(232, 236, 244, 0.65);
+  --lar-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --lar-fg-mute:      rgba(15, 21, 35, 0.44);
+    --lar-blue:         #2d5fd4;
+    --lar-blue-light:   #3b6ef5;
+    --lar-blue-soft:    rgba(60, 110, 245, 0.07);
+    --lar-blue-glow:    rgba(60, 110, 245, 0.2);
+    --lar-border-mid:   rgba(60, 100, 220, 0.18);
+    --lar-btn-primary-from: #4272f0;
+    --lar-btn-primary-to:   #2550cc;
+    --lar-fg-dim:       rgba(15, 21, 35, 0.68);
+  }
+}
+
+/* ── Fade-in animation for newly revealed content ────────────────── */
+@keyframes lar-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lar-fade-in {
+  animation: lar-fade-in 280ms cubic-bezier(0.22, 0.68, 0.32, 1) both;
+}
+
+.lar-header {
+  --lar-bg:           #111318;
+  --lar-bg-elev:      #16191f;
+  --lar-border:       rgba(120, 160, 255, 0.1);
+  --lar-border-mid:   rgba(120, 160, 255, 0.16);
+  --lar-fg:           #e8ecf4;
+  --lar-fg-dim:       rgba(232, 236, 244, 0.65);
+  --lar-fg-mute:      rgba(232, 236, 244, 0.42);
+  --lar-blue:         #5b8cf7;
+  --lar-blue-light:   #7ea8ff;
+  --lar-blue-soft:    rgba(91, 140, 247, 0.12);
+  --lar-blue-glow:    rgba(91, 140, 247, 0.28);
+  --lar-btn-primary-from: #4c7ef5;
+  --lar-btn-primary-to:   #2d5fd4;
+
+  --lar-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+
+  position: relative;
+  margin: 16px 0 18px;
+  padding: 16px 18px 14px;
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, var(--lar-blue-soft) 0%, transparent 55%),
+    var(--lar-bg-elev);
+  border: 1px solid var(--lar-border);
+  box-shadow:
+    0 0 0 1px rgba(120, 160, 255, 0.04) inset,
+    0 14px 32px -18px rgba(0, 0, 0, 0.5),
+    0 2px 6px -2px rgba(0, 0, 0, 0.3);
+  color: var(--lar-fg);
+  font-family: var(--lar-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Thin blue rule on left edge */
+.lar-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: linear-gradient(180deg, var(--lar-blue-light), rgba(91, 140, 247, 0.2));
+}
+
+/* ── Top meta row ─────────────────────────────────────────────────── */
+.lar-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.lar-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--lar-blue-light);
+  opacity: 0.9;
+}
+
+.lar-readtime {
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  color: var(--lar-fg-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Bottom line ──────────────────────────────────────────────────── */
+.lar-bottom-line {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--lar-fg);
+}
+
+/* ── Key points ───────────────────────────────────────────────────── */
+.lar-keypoints {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lar-keypoints li {
+  padding-left: 16px;
+  position: relative;
+  font-size: 13.5px;
+  color: var(--lar-fg-dim);
+}
+
+.lar-keypoints li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.72em;
+  width: 7px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--lar-blue);
+  opacity: 0.7;
+}
+
+/* ── Badges ───────────────────────────────────────────────────────── */
+.lar-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 2px;
+}
+
+.lar-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--lar-border-mid);
+  background: var(--lar-blue-soft);
+  color: var(--lar-blue-light);
+}
+
+/* ── Collapse toggle (header top-right) ───────────────────────────── */
+.lar-collapse-toggle {
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--lar-border-mid);
+  background: transparent;
+  color: var(--lar-fg-mute);
+  cursor: pointer;
+  transition: background 130ms ease, color 130ms ease, border-color 130ms ease;
+  flex: none;
+  white-space: nowrap;
+}
+
+.lar-collapse-toggle:hover {
+  background: var(--lar-blue-soft);
+  color: var(--lar-blue-light);
+  border-color: rgba(120, 160, 255, 0.25);
+}
+
+.lar-collapse-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--lar-blue-glow);
+}
+
+/* ── Reveal bar — sits as a sibling directly after the content root ── */
+.lar-reveal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 0 8px;
+  position: relative;
+  /* Subtle separator so the bar feels anchored to the truncated content */
+  border-top: 1px solid rgba(120, 160, 255, 0.1);
+  margin-top: 2px;
+}
+
+/* Progress indicator (e.g. "2 of 5") */
+.lar-progress {
+  font-family: var(--lar-sans);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  color: var(--lar-fg-mute);
+  padding: 0 4px;
+  opacity: 0.85;
+}
+
+/* "All shown" done label */
+.lar-done-label {
+  font-family: var(--lar-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--lar-fg-mute);
+  opacity: 0.7;
+}
+
+/* Pill buttons */
+.lar-pill {
+  font: inherit;
+  font-family: var(--lar-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 9px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 100ms ease,
+    box-shadow 160ms ease,
+    background 130ms ease,
+    opacity 130ms ease;
+  position: relative;
+  z-index: 1;
+}
+
+.lar-pill:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.lar-pill:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--lar-blue-glow);
+}
+
+.lar-pill:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Smaller variant for step-back */
+.lar-pill-small {
+  font-size: 12px;
+  padding: 6px 14px;
+}
+
+/* Primary: blue gradient */
+.lar-pill-primary {
+  background: linear-gradient(180deg, var(--lar-btn-primary-from), var(--lar-btn-primary-to));
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  color: #fff;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 8px 22px -8px var(--lar-blue-glow),
+    0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.lar-pill-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #5e8fff, #3568df);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 12px 28px -8px var(--lar-blue-glow),
+    0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Ghost */
+.lar-pill-ghost {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--lar-border-mid);
+  color: var(--lar-fg-dim);
+  font-weight: 500;
+}
+
+.lar-pill-ghost:hover:not(:disabled) {
+  background: var(--lar-blue-soft);
+  border-color: rgba(120, 160, 255, 0.25);
+  color: var(--lar-blue-light);
+}
+
+/* ── Light mode ───────────────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  .lar-header {
+    --lar-bg:           #f5f7ff;
+    --lar-bg-elev:      #ffffff;
+    --lar-border:       rgba(60, 100, 220, 0.1);
+    --lar-border-mid:   rgba(60, 100, 220, 0.18);
+    --lar-fg:           #0f1523;
+    --lar-fg-dim:       rgba(15, 21, 35, 0.68);
+    --lar-fg-mute:      rgba(15, 21, 35, 0.44);
+    --lar-blue:         #2d5fd4;
+    --lar-blue-light:   #3b6ef5;
+    --lar-blue-soft:    rgba(60, 110, 245, 0.07);
+    --lar-blue-glow:    rgba(60, 110, 245, 0.2);
+    --lar-btn-primary-from: #4272f0;
+    --lar-btn-primary-to:   #2550cc;
+
+    background:
+      linear-gradient(135deg, var(--lar-blue-soft) 0%, transparent 55%),
+      var(--lar-bg-elev);
+    box-shadow:
+      0 0 0 1px rgba(60, 100, 220, 0.05) inset,
+      0 12px 28px -18px rgba(30, 60, 160, 0.14),
+      0 2px 4px -2px rgba(30, 60, 160, 0.06);
+  }
+
+  .lar-reveal-bar {
+    border-top-color: rgba(60, 100, 220, 0.12);
+  }
+
+  .lar-pill-ghost {
+    background: rgba(15, 21, 35, 0.03);
+    border-color: rgba(60, 100, 220, 0.18);
+    color: rgba(15, 21, 35, 0.62);
+  }
+
+  .lar-pill-ghost:hover:not(:disabled) {
+    background: var(--lar-blue-soft);
+    border-color: rgba(60, 100, 220, 0.28);
+    color: var(--lar-blue);
+  }
+
+  .lar-collapse-toggle:hover {
+    background: var(--lar-blue-soft);
+    color: var(--lar-blue);
+    border-color: rgba(60, 100, 220, 0.28);
+  }
+}

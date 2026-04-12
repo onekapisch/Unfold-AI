@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Unfold AI</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="wrap">
+
+      <header>
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <img src="../../icons/icon32.png" width="20" height="20" alt="" />
+          </div>
+          <div class="brand-text">
+            <h1>Unfold AI</h1>
+            <p class="tagline">Read output at your pace</p>
+          </div>
+        </div>
+
+        <!-- Master on/off toggle -->
+        <label class="master-toggle" id="master-toggle-label" aria-label="Enable Unfold AI">
+          <input type="checkbox" id="master-toggle" />
+          <span class="master-track">
+            <span class="master-thumb"></span>
+          </span>
+          <span class="master-status" id="master-status">Active</span>
+        </label>
+      </header>
+
+      <!-- All settings are wrapped so they can be dimmed when disabled -->
+      <div id="settings-body">
+
+        <section>
+          <h2>Providers</h2>
+          <div id="providers" class="list"></div>
+        </section>
+
+        <section>
+          <h2>Reading preset</h2>
+          <select id="preset">
+            <option value="quick">Quick Scan — compact chunks</option>
+            <option value="standard">Standard — balanced</option>
+            <option value="deep">Deep Dive — larger chunks</option>
+          </select>
+        </section>
+
+        <section>
+          <h2>Words per reveal</h2>
+          <div class="slider-wrap">
+            <input id="reveal-words" type="range" min="60" max="320" step="20" />
+            <div class="slider-labels">
+              <span>Compact</span>
+              <span id="reveal-words-val"></span>
+              <span>Generous</span>
+            </div>
+          </div>
+          <p class="hint">How many words to show each time you click "Show next".</p>
+        </section>
+
+        <section>
+          <h2>Keyboard shortcuts</h2>
+          <div class="shortcuts-list" id="shortcuts"></div>
+          <label class="shortcut-toggle">
+            <input id="kb-toggle" type="checkbox" />
+            <span>Enable keyboard shortcuts</span>
+          </label>
+        </section>
+
+        <section>
+          <h2>Activation threshold</h2>
+          <input id="threshold" type="number" min="60" max="1200" step="20" />
+          <p class="hint">Answers shorter than this many words are left untouched.</p>
+        </section>
+
+      </div><!-- /settings-body -->
+
+      <footer>
+        <span class="status-dot on" id="status-dot"></span>
+        <span id="footer-status">Local only &middot; no data leaves your browser</span>
+        <a class="privacy-link" href="../../privacy.html" target="_blank">Privacy</a>
+        <span class="version" id="version"></span>
+      </footer>
+
+    </main>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Layered AI Reader — In-page preview</title>
+    <link rel="stylesheet" href="../content/styles.css" />
+    <style>
+      /* Mock host page — simulates a ChatGPT-style reading column. */
+      :root {
+        color-scheme: dark;
+        --host-bg: #0e0e0f;
+        --host-surface: #1a1a1c;
+        --host-border: rgba(255, 255, 255, 0.08);
+        --host-fg: #ececec;
+        --host-fg-dim: rgba(236, 236, 236, 0.72);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        background: var(--host-bg);
+        color: var(--host-fg);
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+        font-size: 15px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 48px 24px 120px;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 22px;
+        margin-bottom: 28px;
+        border-bottom: 1px solid var(--host-border);
+        font-size: 13px;
+        color: var(--host-fg-dim);
+      }
+
+      .chat-dot {
+        width: 8px; height: 8px;
+        border-radius: 999px;
+        background: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+      }
+
+      /* User message (mock) */
+      .msg-user {
+        display: flex;
+        justify-content: flex-end;
+        margin: 24px 0;
+      }
+      .msg-user-bubble {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 14px;
+        background: #2a2a2d;
+        color: var(--host-fg);
+        font-size: 14px;
+      }
+
+      /* Assistant message container */
+      .msg-assistant {
+        margin: 28px 0 40px;
+      }
+      .msg-assistant-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--host-fg-dim);
+        margin-bottom: 6px;
+      }
+      .msg-assistant-meta-dot {
+        width: 16px; height: 16px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #f0b67a, #b4691f);
+      }
+
+      .markdown p {
+        margin: 0 0 14px;
+        color: var(--host-fg);
+      }
+      .markdown h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 22px 0 10px;
+        color: var(--host-fg);
+      }
+      .markdown ul {
+        margin: 0 0 14px 22px;
+        padding: 0;
+      }
+      .markdown li {
+        margin: 4px 0;
+        color: var(--host-fg-dim);
+      }
+      .markdown pre {
+        margin: 14px 0;
+        padding: 14px 16px;
+        background: #0a0a0b;
+        border: 1px solid var(--host-border);
+        border-radius: 10px;
+        overflow-x: auto;
+        font-family: "JetBrains Mono", "SF Mono", Menlo, monospace;
+        font-size: 13px;
+        color: #e4e4e7;
+      }
+
+      .toolbar {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        padding: 6px;
+        border-radius: 999px;
+        background: rgba(20, 18, 16, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.6);
+        font-size: 11px;
+        z-index: 10;
+      }
+      .toolbar button {
+        font: inherit;
+        font-size: 11px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: transparent;
+        color: rgba(245, 239, 230, 0.7);
+        border: none;
+        cursor: pointer;
+        letter-spacing: 0.03em;
+      }
+      .toolbar button.on {
+        background: linear-gradient(180deg, #f0b67a, #dc9751);
+        color: #1a1410;
+        font-weight: 600;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --host-bg: #ffffff;
+          --host-surface: #f7f7f8;
+          --host-border: rgba(20, 14, 8, 0.1);
+          --host-fg: #1a1a1a;
+          --host-fg-dim: rgba(26, 26, 26, 0.68);
+          color-scheme: light;
+        }
+        .msg-user-bubble { background: #f3f3f5; }
+        .markdown pre { background: #f6f5f2; color: #1a1a1a; }
+        .toolbar { background: rgba(255, 255, 255, 0.95); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="chat-header">
+        <span class="chat-dot"></span>
+        <span>Mock conversation &middot; in-page UI preview</span>
+      </div>
+
+      <div class="msg-user">
+        <div class="msg-user-bubble">
+          How should I think about choosing between PostgreSQL and MongoDB for a new SaaS backend?
+        </div>
+      </div>
+
+      <!-- Assistant message — the thing the extension enhances -->
+      <div class="msg-assistant" data-message-author-role="assistant">
+        <div class="msg-assistant-meta">
+          <span class="msg-assistant-meta-dot"></span>
+          <span>Assistant</span>
+        </div>
+
+        <!-- ▼ Injected layered-reader header (what users will see) ▼ -->
+        <div class="lar-header" role="region" aria-label="Layered AI Reader summary">
+          <div class="lar-header-top">
+            <span class="lar-label">Bottom line</span>
+            <span class="lar-readtime">3 min read</span>
+          </div>
+
+          <p class="lar-bottom-line">
+            For most SaaS backends, PostgreSQL is the safer default — you get strong relational
+            guarantees, mature tooling, and JSONB for the genuinely schemaless parts.
+          </p>
+
+          <ul class="lar-keypoints">
+            <li>Pick MongoDB only when your data is truly document-shaped and write-heavy at scale.</li>
+            <li>Postgres' JSONB handles ~80% of the flexibility people reach for Mongo for.</li>
+            <li>Migration cost later is much higher out of Mongo than out of Postgres.</li>
+          </ul>
+
+          <div class="lar-badges">
+            <span class="lar-badge">code · 1</span>
+            <span class="lar-badge">list · 2</span>
+          </div>
+
+          <div class="lar-controls" role="group" aria-label="Layered reader controls">
+            <button type="button" class="lar-btn lar-btn-primary">Show next</button>
+            <button type="button" class="lar-btn lar-btn-secondary">Expand all</button>
+            <button type="button" class="lar-btn lar-btn-ghost">Collapse</button>
+          </div>
+        </div>
+        <!-- ▲ end injected header ▲ -->
+
+        <!-- Mock rendered assistant content — progressively revealed -->
+        <div class="markdown">
+          <p>
+            Great question! This is one of the classic architecture decisions early-stage teams
+            spend too long on. The honest answer is that for the vast majority of SaaS products,
+            PostgreSQL is the stronger default, and the reasoning is less about raw performance
+            than about the shape of the problems you'll actually hit in year two.
+          </p>
+
+          <h3>When Postgres wins</h3>
+          <ul>
+            <li>Anything relational: users, orgs, billing, audit logs, permissions</li>
+            <li>Anything requiring transactional integrity across multiple rows</li>
+            <li>Cases where your schema will evolve but the core entities are stable</li>
+          </ul>
+
+          <h3>When Mongo is a reasonable pick</h3>
+          <p>
+            Genuine document workloads — event streams, CMS-style content, product catalogs with
+            wildly different attribute sets per product. The operative word is <em>genuine</em>:
+            many teams reach for Mongo because their schema <em>feels</em> unclear, not because
+            their data is actually document-shaped.
+          </p>
+
+          <pre><code>// Postgres handles schemaless just fine:
+CREATE TABLE events (
+  id uuid PRIMARY KEY,
+  kind text NOT NULL,
+  payload jsonb NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX idx_events_payload ON events USING gin (payload);</code></pre>
+
+          <p>
+            The JSONB + GIN index pattern above is what most teams end up wanting from Mongo
+            without realizing it. You get schema flexibility for the fluid parts of your data
+            while keeping real foreign keys and transactions for everything else.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme toggle so you can preview both modes -->
+    <div class="toolbar" role="group" aria-label="Preview theme">
+      <button type="button" id="dark-btn" class="on">Dark</button>
+      <button type="button" id="light-btn">Light</button>
+    </div>
+
+    <script>
+      // Force a color scheme for quick preview comparison.
+      const dark = document.getElementById("dark-btn");
+      const light = document.getElementById("light-btn");
+      const apply = (scheme) => {
+        document.documentElement.style.colorScheme = scheme;
+        dark.classList.toggle("on", scheme === "dark");
+        light.classList.toggle("on", scheme === "light");
+      };
+      dark.addEventListener("click", () => apply("dark"));
+      light.addEventListener("click", () => apply("light"));
+    </script>
+  </body>
+</html>

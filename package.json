@@ -1,0 +1,25 @@
+{
+  "name": "layered-ai-reader",
+  "version": "1.0.0",
+  "description": "Cross-provider browser extension that turns long AI answers into readable layers.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "tsc --noEmit && vite build && vite build --config vite.content.config.ts",
+    "build:dev": "NODE_ENV=development tsc --noEmit && NODE_ENV=development vite build && NODE_ENV=development vite build --config vite.content.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "package": "npm run build && node scripts/package.mjs",
+    "build:firefox": "tsc --noEmit && vite build --config vite.firefox.config.ts && vite build --config vite.firefox.content.config.ts",
+    "package:firefox": "node scripts/package-firefox.mjs"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.254",
+    "@types/jsdom": "^28.0.1",
+    "jsdom": "^29.0.2",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0",
+    "vitest": "^1.5.0"
+  }
+}

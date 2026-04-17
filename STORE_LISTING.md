@@ -10,7 +10,7 @@
 1. Click **"Items"** in the left sidebar
 2. Click the **"+ New item"** button (top right)
 3. Upload the zip file: `dist/layered-ai-reader-v1.0.0.zip`
-   - Located at: `/Users/equinox/Documents/GitHub New/AI Layered Reader Extension/dist/layered-ai-reader-v1.0.0.zip`
+   - Build it first: `npm run package` (output lands in `dist/`)
 
 ---
 
@@ -174,7 +174,7 @@ chrome-extension://[YOUR_EXTENSION_ID]/privacy.html
 ## After Approval — Firefox AMO Submission
 
 The Firefox package is ready at:
-`/Users/equinox/Documents/GitHub New/AI Layered Reader Extension/unfold-ai-firefox-v1.0.0.zip`
+`unfold-ai-firefox-v1.0.0.zip` (build with `npm run package:firefox`)
 
 Submit at: https://addons.mozilla.org/developers/addon/submit/
 

@@ -60,12 +60,8 @@ export function normalizeSettings(value: unknown): GlobalSettings {
     enabled: booleanValue(input.enabled, DEFAULT_SETTINGS.enabled),
     enabledProviders,
     defaultPreset: presetValue(input.defaultPreset),
-    autoCollapse: autoUnfold,
     autoUnfold,
     lengthThreshold: numberValue(input.lengthThreshold, DEFAULT_SETTINGS.lengthThreshold, 60, 1200),
-    revealWords: numberValue(input.revealWords, DEFAULT_SETTINGS.revealWords, 60, 320),
-    revealMode: input.revealMode === "full" ? "full" : "chunk",
-    codeBlockMode: input.codeBlockMode === "collapse-separately" ? "collapse-separately" : "preserve",
     keyboardShortcuts: booleanValue(input.keyboardShortcuts, DEFAULT_SETTINGS.keyboardShortcuts),
     preferBuiltInSummary: booleanValue(
       input.preferBuiltInSummary,

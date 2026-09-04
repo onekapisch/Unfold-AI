@@ -1,15 +1,14 @@
 # TODO
 
-## P0 — Version 2 release
+## P0 — Founder release actions
 
-- Implement the semantic document and truthful summary engines.
-- Implement Answer Map navigation and progressive reading.
-- Implement local Saved insights.
-- Complete Chrome and Firefox verification.
-- Produce new store screenshots and clean release archives.
+- Perform authenticated live-site smoke checks on each enabled provider before store upload.
+- Host `public/privacy.html` at a public HTTPS URL and add it to both store dashboards.
+- Upload the verified Chrome and Firefox archives, listing copy, and store assets.
 
 ## P1 — Post-release evidence
 
 - Export Chrome Web Store uninstalls by day and operating system.
 - Review aggregate acquisition and installed-user changes after 30 days.
 - Prioritize provider fixes from reproducible support reports.
+- Add opt-in aggregate feature telemetry only if a future privacy review approves it; never collect conversation content.

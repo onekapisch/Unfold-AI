@@ -6,6 +6,7 @@ release/
 output/playwright/
 .worktrees/
 .superpowers/
+.playwright-cli/
 *.zip
 .DS_Store
 *.map

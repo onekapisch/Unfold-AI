@@ -1,6 +1,7 @@
 // Shared, provider-agnostic types for Layered AI Reader.
 
-export type PresetId = "quick" | "standard" | "deep" | "focus" | "balanced" | "full";
+export type PresetId = "focus" | "balanced" | "full";
+export type ChunkPresetId = PresetId | "quick" | "standard" | "deep";
 
 export type BlockKind =
   | "heading"
@@ -59,17 +60,6 @@ export interface ChunkPlan {
   contentHash: string;
 }
 
-export interface SummaryResult {
-  /** Short bottom-line sentence. */
-  bottomLine: string;
-  /** Optional key points (bullets) extracted heuristically. */
-  keyPoints: string[];
-  /** Estimated read time in seconds for the full message. */
-  readTimeSec: number;
-  /** Counts of notable block kinds for badges. */
-  badges: { code: number; table: number; list: number };
-}
-
 export type SummaryEngineKind = "built-in" | "extractive";
 
 export interface SummaryOutput {
@@ -102,13 +92,8 @@ export interface GlobalSettings {
   enabled: boolean;
   enabledProviders: Record<string, boolean>;
   defaultPreset: PresetId;
-  autoCollapse: boolean;
   /** Word count threshold above which a message is considered "long". */
   lengthThreshold: number;
-  /** Words revealed per "Show next" click. Overrides preset's chunkWords. */
-  revealWords: number;
-  revealMode: "chunk" | "full";
-  codeBlockMode: "preserve" | "collapse-separately";
   /** Whether keyboard shortcuts are active. */
   keyboardShortcuts: boolean;
   /** Whether completed long answers transform automatically. */
@@ -156,18 +141,14 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
     deepseek: true,
   },
   defaultPreset: "balanced",
-  autoCollapse: true,
   autoUnfold: true,
   lengthThreshold: 220,
-  revealWords: 150,
-  revealMode: "chunk",
-  codeBlockMode: "preserve",
   keyboardShortcuts: true,
   preferBuiltInSummary: true,
   schemaVersion: 2,
 };
 
-export const PRESET_CHUNK_TARGETS: Record<PresetId, { initialChunks: number; chunkWords: number }> = {
+export const PRESET_CHUNK_TARGETS: Record<ChunkPresetId, { initialChunks: number; chunkWords: number }> = {
   quick: { initialChunks: 1, chunkWords: 90 },
   standard: { initialChunks: 2, chunkWords: 140 },
   deep: { initialChunks: 4, chunkWords: 180 },

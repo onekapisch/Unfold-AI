@@ -53,9 +53,9 @@ function wordCount(root: HTMLElement): number {
 }
 
 function initialSectionCount(settings: GlobalSettings, total: number): number {
-  if (!settings.autoUnfold || settings.defaultPreset === "full") return total;
-  if (settings.defaultPreset === "focus" || settings.defaultPreset === "quick") return Math.min(1, total);
-  if (settings.defaultPreset === "balanced" || settings.defaultPreset === "standard") return Math.min(2, total);
+  if (settings.defaultPreset === "full") return total;
+  if (settings.defaultPreset === "focus") return Math.min(1, total);
+  if (settings.defaultPreset === "balanced") return Math.min(2, total);
   return total;
 }
 
@@ -84,7 +84,7 @@ export function getCallbacks(messageEl: HTMLElement): ActiveCallbacks | undefine
 export function enhanceMessage(ctx: EnhancementContext, restore?: MessageState): boolean {
   const { adapter, settings, messageEl, messageId, conversationId } = ctx;
   const root = adapter.getRenderableContentRoot(messageEl);
-  if (!root || adapter.isMessageStreaming(messageEl) || wordCount(root) < settings.lengthThreshold) {
+  if (!settings.autoUnfold || !root || adapter.isMessageStreaming(messageEl) || wordCount(root) < settings.lengthThreshold) {
     return false;
   }
 

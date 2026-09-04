@@ -3,6 +3,9 @@ import { createSummaryEngine } from "../core/summary/summaryEngine";
 const status = document.getElementById("model-status");
 const prepare = document.getElementById("prepare-model") as HTMLButtonElement | null;
 const finish = document.getElementById("finish") as HTMLButtonElement | null;
+const isFirefox = typeof browser !== "undefined" && Boolean(browser.runtime);
+const chromeModel = document.getElementById("chrome-model");
+if (chromeModel) chromeModel.hidden = isFirefox;
 
 prepare?.addEventListener("click", () => {
   prepare.disabled = true;

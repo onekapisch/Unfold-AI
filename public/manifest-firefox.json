@@ -1,16 +1,19 @@
 {
   "manifest_version": 2,
-  "name": "Unfold AI - Summarize & Navigate AI Answers",
+  "name": "Unfold AI — Summarize & Navigate AI Answers",
   "short_name": "Unfold AI",
   "version": "2.0.0",
   "description": "Summarize long AI answers locally, navigate every section, and save useful insights without sending conversations anywhere.",
   "browser_specific_settings": {
     "gecko": {
       "id": "unfold-ai@extension",
-      "strict_min_version": "109.0",
+      "strict_min_version": "140.0",
       "data_collection_permissions": {
         "required": ["none"]
       }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
     }
   },
   "icons": {
@@ -19,13 +22,13 @@
     "48":  "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  "content_security_policy": "script-src 'self'; object-src 'self'",
   "permissions": [
     "storage",
     "https://chatgpt.com/*",
     "https://claude.ai/*",
     "https://gemini.google.com/*",
     "https://grok.com/*",
-    "https://x.com/*",
     "https://manus.im/*",
     "https://www.perplexity.ai/*",
     "https://chat.deepseek.com/*"
@@ -41,7 +44,6 @@
         "https://claude.ai/*",
         "https://gemini.google.com/*",
         "https://grok.com/*",
-        "https://x.com/*",
         "https://manus.im/*",
         "https://www.perplexity.ai/*",
         "https://chat.deepseek.com/*"

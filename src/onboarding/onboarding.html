@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Welcome to Unfold AI</title><link rel="stylesheet" href="./onboarding.css"/></head>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Welcome to Unfold AI</title><link rel="icon" href="../../icons/icon16.png"/><link rel="stylesheet" href="./onboarding.css"/></head>
 <body>
   <main>
     <nav><div class="brand"><img src="../../icons/icon48.png" width="36" height="36" alt=""/><strong>Unfold AI</strong></div><span>Version 2.0</span></nav>
@@ -12,7 +12,7 @@
       </div>
     </section>
     <section class="steps"><article><b>01</b><h2>Open a supported AI chat</h2><p>ChatGPT, Claude, Gemini, Grok, Perplexity, DeepSeek, or Manus.</p></article><article><b>02</b><h2>Let the answer finish</h2><p>Long answers unfold automatically. Short answers remain untouched.</p></article><article><b>03</b><h2>Navigate and save</h2><p>Jump to a section, reveal more, or save exact source text locally.</p></article></section>
-    <section class="setup"><div><p class="eyebrow">OPTIONAL CHROME UPGRADE</p><h2>Use Chrome’s on-device AI model</h2><p id="model-status">Unfold already works with its deterministic local summary. If Chrome supports its built-in model, you can prepare it for future answers.</p></div><button id="prepare-model" type="button">Check on-device model</button></section>
+    <section id="chrome-model" class="setup"><div><p class="eyebrow">OPTIONAL CHROME UPGRADE</p><h2>Use Chrome’s on-device AI model</h2><p id="model-status">Unfold already works with its deterministic local summary. If Chrome supports its built-in model, you can prepare it for future answers.</p></div><button id="prepare-model" type="button">Check on-device model</button></section>
     <footer><button id="finish" type="button">Start using Unfold AI <span>→</span></button><p>No signup · no cloud processing · change settings anytime</p></footer>
   </main>
   <script type="module" src="./onboarding.ts"></script>

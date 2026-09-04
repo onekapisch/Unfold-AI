@@ -38,6 +38,7 @@ describe("mountAnswerExperience", () => {
     expect(shadow.textContent).toContain("Local extractive summary");
     expect(shadow.textContent).toContain("3 sections");
     expect(shadow.querySelectorAll("[role='tab']")).toHaveLength(4);
+    expect(shadow.querySelectorAll("[data-save-section]")).toHaveLength(3);
 
     (shadow.querySelector("[data-tab='source']") as HTMLButtonElement).click();
     expect(shadow.querySelector("[data-map-list]")?.textContent).toContain("the guide");

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Unfold AI - Summarize & Navigate AI Answers",
+  "name": "Unfold AI — Summarize & Navigate AI Answers",
   "short_name": "Unfold AI",
   "version": "2.0.0",
   "description": "Summarize long AI answers locally, navigate every section, and save useful insights without sending conversations anywhere.",
@@ -12,12 +12,14 @@
     "128": "icons/icon128.png"
   },
   "permissions": ["storage"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "host_permissions": [
     "https://chatgpt.com/*",
     "https://claude.ai/*",
     "https://gemini.google.com/*",
     "https://grok.com/*",
-    "https://x.com/*",
     "https://manus.im/*",
     "https://www.perplexity.ai/*",
     "https://chat.deepseek.com/*"
@@ -33,7 +35,6 @@
         "https://claude.ai/*",
         "https://gemini.google.com/*",
         "https://grok.com/*",
-        "https://x.com/*",
         "https://manus.im/*",
         "https://www.perplexity.ai/*",
         "https://chat.deepseek.com/*"

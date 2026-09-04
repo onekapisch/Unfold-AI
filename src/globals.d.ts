@@ -8,6 +8,11 @@ declare module "*.css" {
   export default content;
 }
 
+declare module "*.png" {
+  const url: string;
+  export default url;
+}
+
 interface WindowOrWorkerGlobalScope {
   Summarizer?: import("./core/summary/summaryEngine").BuiltInSummarizerFactory;
 }

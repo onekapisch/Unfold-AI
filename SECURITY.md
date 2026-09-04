@@ -19,6 +19,7 @@ Saved insights are created only after an explicit user action and remain in exte
 - Summaries use Chrome's local built-in model when available or a deterministic local extractive fallback.
 - No secret or API key is required. `.env.local` remains ignored if introduced for development tooling.
 - Release archives are assembled from explicit production allowlists.
+- Production has no npm runtime dependencies. `npm audit --omit=dev` reports zero runtime vulnerabilities as of 2026-09-04; development-tool advisories do not enter either release archive and should still be reviewed during dependency upgrades.
 
 ## Retention
 

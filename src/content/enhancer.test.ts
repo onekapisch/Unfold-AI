@@ -48,6 +48,15 @@ describe("enhanceMessage", () => {
       adapter: short.adapter, settings: DEFAULT_SETTINGS,
       messageEl: short.message, messageId: "short", conversationId: "conversation",
     })).toBe(false);
+
+    const disabled = fixture(false);
+    expect(enhanceMessage({
+      adapter: disabled.adapter,
+      settings: { ...DEFAULT_SETTINGS, autoUnfold: false, lengthThreshold: 60 },
+      messageEl: disabled.message,
+      messageId: "disabled",
+      conversationId: "conversation",
+    })).toBe(false);
   });
 
   it("shows two semantic sections in balanced mode and always restores the full source", () => {

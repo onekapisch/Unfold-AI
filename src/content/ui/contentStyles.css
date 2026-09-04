@@ -43,8 +43,11 @@ button, input { font: inherit; }
 .search { width: 100%; padding: 9px 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 9px; outline: 0; color: white; background: rgba(255,255,255,.07); font-size: 12px; }
 .search::placeholder { color: #8996ab; }
 .map-list { display: grid; gap: 3px; max-height: 178px; margin-top: 9px; overflow: auto; }
+.map-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
 .map-entry { display: grid; grid-template-columns: 8px 1fr; gap: 7px; align-items: start; width: 100%; padding: 7px 6px; border: 0; border-radius: 7px; color: #dfe6f1; background: transparent; text-align: left; cursor: pointer; font-size: 11px; line-height: 1.35; }
 .map-entry:hover, .map-entry:focus-visible { color: white; background: rgba(255,255,255,.08); }
+.save-section { width: 24px; min-height: 24px; padding: 0; border-color: transparent; color: #9eabc0; background: transparent; }
+.save-section:hover, .save-section:focus-visible { color: white; border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.08); }
 .map-dot { width: 5px; height: 5px; margin-top: 5px; border-radius: 50%; background: var(--blue); }
 .status { margin: 9px 0 0; color: #97a4b9; font-size: 11px; }
 .reader { grid-column: 1 / -1; display: flex; align-items: center; gap: 7px; padding: 10px 12px; border-top: 1px solid rgba(17,26,43,.09); background: var(--paper); }

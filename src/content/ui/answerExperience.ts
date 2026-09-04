@@ -66,9 +66,9 @@ function countLabel(summary: SummaryOutput): string {
   const labels = [
     `${summary.counts.sections} section${summary.counts.sections === 1 ? "" : "s"}`,
   ];
-  if (summary.counts.actions) labels.push(`${summary.counts.actions} actions`);
-  if (summary.counts.sources) labels.push(`${summary.counts.sources} sources`);
-  if (summary.counts.code) labels.push(`${summary.counts.code} code`);
+  if (summary.counts.actions) labels.push(`${summary.counts.actions} action${summary.counts.actions === 1 ? "" : "s"}`);
+  if (summary.counts.sources) labels.push(`${summary.counts.sources} source${summary.counts.sources === 1 ? "" : "s"}`);
+  if (summary.counts.code) labels.push(`${summary.counts.code} code block${summary.counts.code === 1 ? "" : "s"}`);
   return labels.join(" · ");
 }
 
@@ -132,12 +132,24 @@ export function mountAnswerExperience(options: MountOptions): AnswerExperience {
   const renderEntries = () => {
     const matches = filterAnswerMap(mapEntries, activeKind, search.value);
     list.replaceChildren(...matches.map((entry) => {
+      const row = element("div", "map-row");
       const item = element("button", "map-entry");
       item.type = "button";
       item.dataset.mapEntry = entry.id;
       item.append(element("span", "map-dot"), element("span", "map-label", entry.label));
       item.addEventListener("click", () => callbacks.onNavigate(entry));
-      return item;
+      row.append(item);
+      if (entry.kind === "outline") {
+        const section = documentModel.sections.find((candidate) => candidate.id === entry.sectionId);
+        if (section) {
+          const saveSection = button("+", "save-section", () => callbacks.onSave(section));
+          saveSection.dataset.saveSection = section.id;
+          saveSection.setAttribute("aria-label", `Save section: ${section.title}`);
+          saveSection.title = "Save section";
+          row.append(saveSection);
+        }
+      }
+      return row;
     }));
     status.textContent = matches.length ? "" : "No matching items";
   };

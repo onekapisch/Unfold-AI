@@ -1,4 +1,4 @@
-import type { Chunk, ChunkPlan, PresetId, SemanticBlock } from "../types";
+import type { Chunk, ChunkPlan, ChunkPresetId, SemanticBlock } from "../types";
 import { PRESET_CHUNK_TARGETS } from "../types";
 import { directElementChildren } from "../dom";
 import { toSemanticBlock } from "./blockClassifier";
@@ -18,7 +18,7 @@ import { fnv1a } from "../hashing";
  */
 export function planChunks(
   contentRoot: HTMLElement,
-  preset: PresetId,
+  preset: ChunkPresetId,
   revealWordsOverride?: number,
 ): ChunkPlan {
   const blocks: SemanticBlock[] = [];

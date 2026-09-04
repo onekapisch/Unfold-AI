@@ -2,7 +2,7 @@ import { normalizeText, safeText } from "../dom";
 import type { SemanticDocument, SummaryOutput } from "../types";
 import { summarizeExtractively } from "./extractiveSummary";
 
-export type BuiltInAvailability = "available" | "downloadable" | "unavailable";
+export type BuiltInAvailability = "available" | "downloadable" | "downloading" | "unavailable";
 export type ModelDownloadResult = "ready" | "unavailable" | "requires-user-activation";
 
 export interface BuiltInSummarizerSession {
@@ -96,7 +96,7 @@ export function createSummaryEngine(options: SummaryEngineOptions = {}): Summary
       if (!preferBuiltIn || !builtIn) return "unavailable";
       const availability = await this.getAvailability();
       if (availability === "unavailable") return "unavailable";
-      if (availability === "downloadable" && !userActivated) {
+      if ((availability === "downloadable" || availability === "downloading") && !userActivated) {
         return "requires-user-activation";
       }
       try {

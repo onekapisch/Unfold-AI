@@ -12,13 +12,15 @@
     "typecheck": "tsc --noEmit",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "package": "npm run build && node scripts/package.mjs",
-    "build:firefox": "tsc --noEmit && vite build --config vite.firefox.config.ts && vite build --config vite.firefox.content.config.ts",
-    "package:firefox": "node scripts/package-firefox.mjs",
+    "package": "npm run build && npm run package:chrome",
+    "package:chrome": "node scripts/package.mjs",
+    "build:firefox": "tsc --noEmit && vite build --config vite.firefox.config.ts && vite build --config vite.firefox.content.config.ts && node scripts/install-firefox-manifest.mjs",
+    "package:firefox": "npm run build:firefox && npm run package:firefox-only",
+    "package:firefox-only": "node scripts/package-firefox.mjs",
     "build:preview": "vite build --config vite.preview.config.ts",
     "validate:package": "node scripts/validate-package.mjs",
-    "capture:store": "node scripts/capture-store-assets.mjs",
-    "verify": "npm run lint && npm run type-check && npm test && npm run build && npm run build:firefox && npm run validate:package"
+    "capture:store": "npm run build:preview && node scripts/capture-store-assets.mjs",
+    "verify": "npm run lint && npm run type-check && npm test && npm run build && npm run package:chrome && npm run build:firefox && npm run package:firefox-only && npm run validate:package"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

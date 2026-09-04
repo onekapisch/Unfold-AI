@@ -24,6 +24,8 @@ npm run build
 
 Load `dist/` as an unpacked Chrome extension. Build Firefox with `npm run build:firefox` and load `dist-firefox/manifest.json` from `about:debugging`.
 
+The Chrome build uses Manifest V3. The Firefox build installs the separate Manifest V2 file after compilation; do not load `public/manifest-firefox.json` directly. Firefox 140+ on desktop and 142+ on Android are required for the built-in no-data-collection declaration.
+
 ## Verification
 
 ```bash
@@ -48,6 +50,8 @@ npm run validate:package
 ```
 
 Release archives are written to `release/`. Store publication is manual and requires founder approval.
+
+Store artwork is in `assets/store/`. Rebuild the deterministic capture preview with `npm run build:preview`; the preview is excluded from both release archives.
 
 ## Privacy
 

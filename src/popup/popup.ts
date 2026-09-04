@@ -42,6 +42,8 @@ function renderProviders(settings: GlobalSettings): void {
 
 async function init(): Promise<void> {
   const settings = await loadSettings();
+  const isFirefox = typeof browser !== "undefined" && Boolean(browser.runtime);
+  required<HTMLElement>("built-in-row").hidden = isFirefox;
   const enabled = required<HTMLInputElement>("enabled");
   enabled.checked = settings.enabled;
   setEnabledPresentation(settings.enabled);

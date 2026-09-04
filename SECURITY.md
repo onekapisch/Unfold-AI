@@ -17,9 +17,17 @@ Saved insights are created only after an explicit user action and remain in exte
 - Runtime messages and JSON imports are validated before mutation.
 - Source content is inserted with `textContent`, never executable HTML.
 - Summaries use Chrome's local built-in model when available or a deterministic local extractive fallback.
-- No secret or API key is required. `.env.local` remains ignored if introduced for development tooling.
+- No secret or API key is required. Environment files, local package-manager configuration, credential exports, and private-key formats are explicitly ignored.
 - Release archives are assembled from explicit production allowlists.
-- Production has no npm runtime dependencies. `npm audit --omit=dev` reports zero runtime vulnerabilities as of 2026-09-04; development-tool advisories do not enter either release archive and should still be reviewed during dependency upgrades.
+- Production has no npm runtime dependencies. The complete npm tree reports zero known vulnerabilities as of 2026-09-04.
+- GitHub secret scanning and push protection are enabled for the public repository.
+
+## Repository hygiene
+
+- Synthetic provider fixtures must never contain real conversations, account details, or customer data.
+- Internal analytics, adoption targets, competitive notes, and agent execution plans do not belong in the public tree.
+- Store media belongs in `assets/store/`; generated builds, archives, browser profiles, coverage, and local output remain ignored.
+- Dependency updates are checked weekly and every push runs the same lint, type, test, build, and package-validation gate used locally.
 
 ## Retention
 
@@ -27,4 +35,4 @@ Settings and saved insights remain until the user deletes them or removes the ex
 
 ## Vulnerability reporting
 
-Report reproducible security issues through the support contact listed in the browser store. Do not include real private conversation text; use a minimal synthetic reproduction.
+Report vulnerabilities privately through [GitHub Security Advisories](https://github.com/onekapisch/Unfold-AI/security/advisories/new). Do not include real private conversation text; use a minimal synthetic reproduction.

@@ -25,6 +25,10 @@
 - Runtime messages and imported backups are schema- and size-validated.
 - No runtime dependencies, remote code, account, analytics, or cloud processing.
 - Added a public, rendered privacy-policy document for browser-store disclosure.
+- Removed internal strategy and agent execution documents from the public tree.
+- Hardened ignore rules for environment files, credentials, private keys, logs, coverage, and editor state.
+- Updated the Node-compatible development toolchain to resolve all known npm advisories.
+- Added automated verification and weekly dependency maintenance for the public repository.
 
 ## 1.0.0 — 2026-04-17
 

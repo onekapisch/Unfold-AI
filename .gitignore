@@ -4,9 +4,28 @@ dist-firefox/
 preview-dist/
 release/
 output/playwright/
+coverage/
 .worktrees/
 .superpowers/
 .playwright-cli/
 *.zip
+*.log
 .DS_Store
 *.map
+
+# Local configuration and credentials. The extension currently needs none.
+.env
+.env.*
+!.env.example
+.npmrc
+credentials*.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Editor-local state.
+.idea/
+.vscode/

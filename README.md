@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/brand/unfold-app-icon.png" width="116" height="116" alt="Unfold AI folded U app icon">
+<img src="public/icons/icon512.png" width="116" height="116" alt="Unfold AI folded U app icon">
 
 # Unfold AI
 
@@ -149,7 +149,7 @@ See the dated [2.0 release evidence](docs/verification/2.0-release-evidence.md) 
 
 ## Build from source
 
-Requirements: Node.js 20+ and npm.
+Requirements: Node.js 20.19+ and npm.
 
 ```bash
 git clone https://github.com/onekapisch/Unfold-AI.git

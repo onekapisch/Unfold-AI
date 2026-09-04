@@ -25,6 +25,25 @@ export interface SemanticBlock {
   atomic: boolean;
 }
 
+/** A navigable group of source blocks. No generated text is stored here. */
+export interface SemanticSection {
+  id: string;
+  index: number;
+  title: string;
+  blocks: SemanticBlock[];
+  words: number;
+}
+
+/** Provider-neutral representation of one rendered assistant answer. */
+export interface SemanticDocument {
+  answerId: string;
+  sections: SemanticSection[];
+  blocks: SemanticBlock[];
+  plainText: string;
+  wordCount: number;
+  contentHash: string;
+}
+
 /** A chunk is a contiguous run of semantic blocks revealed together. */
 export interface Chunk {
   index: number;

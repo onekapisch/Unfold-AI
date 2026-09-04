@@ -1,6 +1,6 @@
 // Shared, provider-agnostic types for Layered AI Reader.
 
-export type PresetId = "quick" | "standard" | "deep";
+export type PresetId = "quick" | "standard" | "deep" | "focus" | "balanced" | "full";
 
 export type BlockKind =
   | "heading"
@@ -111,6 +111,12 @@ export interface GlobalSettings {
   codeBlockMode: "preserve" | "collapse-separately";
   /** Whether keyboard shortcuts are active. */
   keyboardShortcuts: boolean;
+  /** Whether completed long answers transform automatically. */
+  autoUnfold: boolean;
+  /** Prefer Chrome's built-in local model when it is available. */
+  preferBuiltInSummary: boolean;
+  /** Persisted settings schema used for safe migrations. */
+  schemaVersion: 2;
 }
 
 export interface MessageState {
@@ -149,17 +155,23 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
     perplexity: true,
     deepseek: true,
   },
-  defaultPreset: "standard",
+  defaultPreset: "balanced",
   autoCollapse: true,
+  autoUnfold: true,
   lengthThreshold: 220,
   revealWords: 150,
   revealMode: "chunk",
   codeBlockMode: "preserve",
   keyboardShortcuts: true,
+  preferBuiltInSummary: true,
+  schemaVersion: 2,
 };
 
 export const PRESET_CHUNK_TARGETS: Record<PresetId, { initialChunks: number; chunkWords: number }> = {
   quick: { initialChunks: 1, chunkWords: 90 },
   standard: { initialChunks: 2, chunkWords: 140 },
   deep: { initialChunks: 4, chunkWords: 180 },
+  focus: { initialChunks: 1, chunkWords: 110 },
+  balanced: { initialChunks: 2, chunkWords: 160 },
+  full: { initialChunks: 9999, chunkWords: 220 },
 };

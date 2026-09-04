@@ -1,88 +1,105 @@
-import type { ConversationState, GlobalSettings, MessageState } from "../types";
+import type { ConversationState, GlobalSettings, MessageState, PresetId } from "../types";
 import { DEFAULT_SETTINGS } from "../types";
+import {
+  webExtension,
+  type StorageChangeSet,
+  type WebExtensionApi,
+} from "../../platform/webExtension";
 
-// chrome.storage wrappers — works in Chrome (callback API) and Firefox
-// (Promise-based browser.* API).
-//
-// Cross-browser strategy:
-//   1. Firefox: prefer browser.* (native Promise API). The chrome.* compat
-//      shim exists in Firefox but its callback form can silently never fire,
-//      hanging any awaiting caller. Always use browser.* first on Firefox.
-//   2. Chrome / Arc / Dia: use chrome.* with callback → Promise wrapper.
-//   3. Dev / test pages: fall back to localStorage.
-
-const SETTINGS_KEY = "lar:settings";
+export const SETTINGS_KEY = "lar:settings";
 const CONV_PREFIX = "lar:conv:";
+const ACCESS_KEY = "lar:conv-access-order";
+const MAX_CONVERSATIONS = 100;
+const PROVIDERS = ["chatgpt", "claude", "gemini", "grok", "manus", "perplexity", "deepseek"];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const _browser: any = (() => {
-  try { return (globalThis as any).browser ?? undefined; } catch { return undefined; }
-})();
-
-async function get<T>(key: string): Promise<T | undefined> {
-  // ── Firefox: use browser.storage.local (native Promise API) ────────
-  if (_browser?.storage?.local && _browser?.runtime?.id) {
-    try {
-      const res = await (_browser.storage.local.get(key) as Promise<Record<string, T>>);
-      return res[key] as T | undefined;
-    } catch {
-      return undefined;
-    }
-  }
-
-  // ── Chrome / Arc / Dia: callback → Promise ─────────────────────────
-  if (typeof chrome !== "undefined" && chrome?.storage?.local && chrome?.runtime?.id) {
-    return new Promise((resolve) => {
-      try {
-        chrome.storage.local.get(key, (res) => {
-          if (chrome.runtime.lastError) { resolve(undefined); return; }
-          resolve((res as Record<string, T>)[key] as T | undefined);
-        });
-      } catch {
-        resolve(undefined);
-      }
-    });
-  }
-
-  // ── Fallback: localStorage (dev preview / unit tests) ──────────────
-  const raw = globalThis.localStorage?.getItem(key);
-  return raw ? (JSON.parse(raw) as T) : undefined;
+interface AccessEntry {
+  key: string;
+  ts: number;
 }
 
-async function set<T>(key: string, value: T): Promise<void> {
-  // ── Firefox ─────────────────────────────────────────────────────────
-  if (_browser?.storage?.local && _browser?.runtime?.id) {
-    try {
-      await (_browser.storage.local.set({ [key]: value }) as Promise<void>);
-    } catch { /* ignore */ }
-    return;
-  }
-
-  // ── Chrome / Arc / Dia ──────────────────────────────────────────────
-  if (typeof chrome !== "undefined" && chrome?.storage?.local && chrome?.runtime?.id) {
-    return new Promise((resolve) => {
-      try {
-        chrome.storage.local.set({ [key]: value }, () => {
-          if (chrome.runtime.lastError) { resolve(); return; }
-          resolve();
-        });
-      } catch {
-        resolve();
-      }
-    });
-  }
-
-  // ── Fallback ─────────────────────────────────────────────────────────
-  globalThis.localStorage?.setItem(key, JSON.stringify(value));
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export async function loadSettings(): Promise<GlobalSettings> {
-  const stored = await get<Partial<GlobalSettings>>(SETTINGS_KEY);
-  return { ...DEFAULT_SETTINGS, ...(stored ?? {}) };
+function booleanValue(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
 }
 
-export async function saveSettings(settings: GlobalSettings): Promise<void> {
-  await set(SETTINGS_KEY, settings);
+function numberValue(value: unknown, fallback: number, min: number, max: number): number {
+  return typeof value === "number" && Number.isFinite(value)
+    ? Math.max(min, Math.min(max, value))
+    : fallback;
+}
+
+function presetValue(value: unknown): PresetId {
+  const migrations: Record<string, PresetId> = {
+    quick: "focus",
+    standard: "balanced",
+    deep: "full",
+  };
+  if (typeof value !== "string") return "balanced";
+  if (value === "focus" || value === "balanced" || value === "full") return value;
+  return migrations[value] ?? "balanced";
+}
+
+export function normalizeSettings(value: unknown): GlobalSettings {
+  const input = isRecord(value) ? value : {};
+  const storedProviders = isRecord(input.enabledProviders) ? input.enabledProviders : {};
+  const enabledProviders = Object.fromEntries(
+    PROVIDERS.map((provider) => [
+      provider,
+      booleanValue(storedProviders[provider], DEFAULT_SETTINGS.enabledProviders[provider] ?? true),
+    ]),
+  );
+  const autoUnfold = booleanValue(
+    input.autoUnfold,
+    booleanValue(input.autoCollapse, DEFAULT_SETTINGS.autoUnfold),
+  );
+
+  return {
+    enabled: booleanValue(input.enabled, DEFAULT_SETTINGS.enabled),
+    enabledProviders,
+    defaultPreset: presetValue(input.defaultPreset),
+    autoCollapse: autoUnfold,
+    autoUnfold,
+    lengthThreshold: numberValue(input.lengthThreshold, DEFAULT_SETTINGS.lengthThreshold, 60, 1200),
+    revealWords: numberValue(input.revealWords, DEFAULT_SETTINGS.revealWords, 60, 320),
+    revealMode: input.revealMode === "full" ? "full" : "chunk",
+    codeBlockMode: input.codeBlockMode === "collapse-separately" ? "collapse-separately" : "preserve",
+    keyboardShortcuts: booleanValue(input.keyboardShortcuts, DEFAULT_SETTINGS.keyboardShortcuts),
+    preferBuiltInSummary: booleanValue(
+      input.preferBuiltInSummary,
+      DEFAULT_SETTINGS.preferBuiltInSummary,
+    ),
+    schemaVersion: 2,
+  };
+}
+
+export async function loadSettings(api: WebExtensionApi = webExtension): Promise<GlobalSettings> {
+  const stored = await api.storageGet<unknown>(SETTINGS_KEY);
+  const settings = normalizeSettings(stored);
+  if (!isRecord(stored) || stored.schemaVersion !== 2) {
+    await api.storageSet(SETTINGS_KEY, settings);
+  }
+  return settings;
+}
+
+export async function saveSettings(
+  settings: GlobalSettings,
+  api: WebExtensionApi = webExtension,
+): Promise<void> {
+  await api.storageSet(SETTINGS_KEY, normalizeSettings(settings));
+}
+
+export function subscribeSettings(
+  listener: (settings: GlobalSettings) => void,
+  api: WebExtensionApi = webExtension,
+): () => void {
+  return api.storageSubscribe((changes: StorageChangeSet, areaName: string) => {
+    if (areaName !== "local") return;
+    const next = changes[SETTINGS_KEY]?.newValue;
+    if (next !== undefined) listener(normalizeSettings(next));
+  });
 }
 
 function convKey(providerId: string, conversationId: string): string {
@@ -92,8 +109,9 @@ function convKey(providerId: string, conversationId: string): string {
 export async function loadConversationState(
   providerId: string,
   conversationId: string,
+  api: WebExtensionApi = webExtension,
 ): Promise<ConversationState> {
-  const existing = await get<ConversationState>(convKey(providerId, conversationId));
+  const existing = await api.storageGet<ConversationState>(convKey(providerId, conversationId));
   return existing ?? { providerId, conversationId, messages: {} };
 }
 
@@ -102,58 +120,27 @@ export async function saveMessageState(
   conversationId: string,
   messageId: string,
   state: MessageState,
+  api: WebExtensionApi = webExtension,
 ): Promise<void> {
-  const current = await loadConversationState(providerId, conversationId);
+  const current = await loadConversationState(providerId, conversationId, api);
   current.messages[messageId] = state;
-  await set(convKey(providerId, conversationId), current);
-
-  // Track access order for eviction
-  await trackConversationAccess(providerId, conversationId);
+  await api.storageSet(convKey(providerId, conversationId), current);
+  await trackConversationAccess(providerId, conversationId, api);
 }
 
-// ── Storage eviction ──────────────────────────────────────────────────
-const ACCESS_KEY = "lar:conv-access-order";
-const MAX_CONVERSATIONS = 100;
+async function trackConversationAccess(
+  providerId: string,
+  conversationId: string,
+  api: WebExtensionApi,
+): Promise<void> {
+  const key = convKey(providerId, conversationId);
+  const entries = (await api.storageGet<AccessEntry[]>(ACCESS_KEY)) ?? [];
+  const filtered = entries.filter((entry) => entry.key !== key);
+  filtered.push({ key, ts: Date.now() });
 
-interface AccessEntry {
-  key: string;
-  ts: number;
-}
-
-async function trackConversationAccess(providerId: string, conversationId: string): Promise<void> {
-  try {
-    const key = convKey(providerId, conversationId);
-    const entries = (await get<AccessEntry[]>(ACCESS_KEY)) ?? [];
-
-    // Remove existing entry for this conversation
-    const filtered = entries.filter((e) => e.key !== key);
-    filtered.push({ key, ts: Date.now() });
-
-    // Evict oldest if over limit
-    if (filtered.length > MAX_CONVERSATIONS) {
-      const toRemove = filtered.splice(0, filtered.length - MAX_CONVERSATIONS);
-      for (const entry of toRemove) {
-        await remove(entry.key);
-      }
-    }
-
-    await set(ACCESS_KEY, filtered);
-  } catch {
-    // Eviction is best-effort — never block the main save
+  if (filtered.length > MAX_CONVERSATIONS) {
+    const expired = filtered.splice(0, filtered.length - MAX_CONVERSATIONS);
+    await Promise.all(expired.map((entry) => api.storageRemove(entry.key)));
   }
-}
-
-async function remove(key: string): Promise<void> {
-  if (_browser?.storage?.local && _browser?.runtime?.id) {
-    try { await (_browser.storage.local.remove(key) as Promise<void>); } catch { /* ignore */ }
-    return;
-  }
-  if (typeof chrome !== "undefined" && chrome?.storage?.local && chrome?.runtime?.id) {
-    return new Promise((resolve) => {
-      try {
-        chrome.storage.local.remove(key, () => { resolve(); });
-      } catch { resolve(); }
-    });
-  }
-  globalThis.localStorage?.removeItem(key);
+  await api.storageSet(ACCESS_KEY, filtered);
 }

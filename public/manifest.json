@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Unfold AI - AI output controller",
+  "name": "Unfold AI - Summarize & Navigate AI Answers",
   "short_name": "Unfold AI",
-  "version": "1.0.0",
-  "description": "Read AI output at your pace. Unfold turns long AI answers into layers — bottom line first, details when you want them.",
+  "version": "2.0.0",
+  "description": "Summarize long AI answers locally, navigate every section, and save useful insights without sending conversations anywhere.",
   "minimum_chrome_version": "109",
   "icons": {
     "16":  "icons/icon16.png",

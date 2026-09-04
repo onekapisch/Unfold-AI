@@ -85,6 +85,18 @@ export interface SummaryOutput {
   };
 }
 
+export type MapEntryKind = "outline" | "action" | "source" | "code";
+
+export interface AnswerMapEntry {
+  id: string;
+  kind: MapEntryKind;
+  sectionId: string;
+  label: string;
+  searchText: string;
+  sourceEl: HTMLElement;
+  href?: string;
+}
+
 export interface GlobalSettings {
   /** Master switch — when false the extension does nothing on any page. */
   enabled: boolean;

@@ -23,6 +23,7 @@
 
 - Runtime messages and imported backups are schema- and size-validated.
 - No runtime dependencies, remote code, account, analytics, or cloud processing.
+- Added a public, rendered privacy-policy document for browser-store disclosure.
 
 ## 1.0.0 — 2026-04-17
 

@@ -57,4 +57,4 @@ The canonical official icon is `assets/brand/unfold-app-icon.png`. Chrome and Fi
 
 ## Privacy
 
-Conversation content is processed in the active tab. A section enters extension-owned IndexedDB only when the user explicitly saves it. See [SECURITY.md](SECURITY.md) and `public/privacy.html`.
+Conversation content is processed in the active tab. A section enters extension-owned IndexedDB only when the user explicitly saves it. See [PRIVACY.md](PRIVACY.md), [SECURITY.md](SECURITY.md), and `public/privacy.html`.

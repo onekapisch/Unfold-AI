@@ -1,6 +1,11 @@
 node_modules/
 dist/
 dist-firefox/
+preview-dist/
+release/
+output/playwright/
+.worktrees/
+.superpowers/
 *.zip
 .DS_Store
 *.map

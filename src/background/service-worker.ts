@@ -17,4 +17,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return true;
 });
 
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    void chrome.tabs.create({ url: chrome.runtime.getURL("src/onboarding/onboarding.html") });
+  }
+});
+
 export {};

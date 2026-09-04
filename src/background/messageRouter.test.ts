@@ -24,6 +24,7 @@ function repository(): SavedRepository {
     updateNote: vi.fn().mockResolvedValue({ ...insight, note: "keep" }),
     delete: vi.fn().mockResolvedValue(undefined),
     clear: vi.fn().mockResolvedValue(undefined),
+    replaceAll: vi.fn().mockResolvedValue(undefined),
   };
 }
 
@@ -70,5 +71,11 @@ describe("routeMessage", () => {
       ok: false,
       error: "database unavailable",
     });
+  });
+
+  it("restores only validated backup records", async () => {
+    const saved = repository();
+    await expect(routeMessage({ type: "saved:replace", insights: [insight] }, saved)).resolves.toEqual({ ok: true });
+    expect(saved.replaceAll).toHaveBeenCalledWith([insight]);
   });
 });

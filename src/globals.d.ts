@@ -27,8 +27,13 @@ interface ServiceWorkerGlobalScope {
 
 declare const browser: {
   runtime: {
+    getURL(path: string): string;
     onMessage: {
       addListener(listener: (message: unknown) => Promise<unknown>): void;
     };
+    onInstalled: {
+      addListener(listener: (details: { reason: string }) => void): void;
+    };
   };
+  tabs: { create(options: { url: string }): Promise<unknown> };
 };

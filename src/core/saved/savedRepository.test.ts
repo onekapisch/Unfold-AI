@@ -71,6 +71,20 @@ describe("createSavedRepository", () => {
     );
     await expect(repository.list()).resolves.toHaveLength(1);
   });
+
+  it("restores a validated backup atomically", async () => {
+    const repository = createSavedRepository({ factory, databaseName: "saved-restore" });
+    const original = await repository.create(validInput);
+    const replacement = {
+      ...original,
+      id: "restored",
+      pageTitle: "Restored answer",
+      createdAt: 100,
+      updatedAt: 100,
+    };
+    await repository.replaceAll([replacement]);
+    await expect(repository.list()).resolves.toEqual([replacement]);
+  });
 });
 
 describe("saved insight export", () => {

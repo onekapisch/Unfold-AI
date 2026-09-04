@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Welcome to Unfold AI</title><link rel="stylesheet" href="./onboarding.css"/></head>
+<body>
+  <main>
+    <nav><div class="brand"><img src="../../icons/icon48.png" width="36" height="36" alt=""/><strong>Unfold AI</strong></div><span>Version 2.0</span></nav>
+    <section class="hero">
+      <div class="copy"><p class="eyebrow">YOUR ANSWERS, FINALLY NAVIGABLE</p><h1>Read the insight.<br/><em>Skip the scroll.</em></h1><p class="lede">Unfold turns long AI answers into a truthful local summary, a clickable Answer Map, and focused reading layers.</p><div class="privacy"><i></i><span><strong>Private by design</strong>Conversation text never leaves your browser.</span></div></div>
+      <div class="demo" aria-label="Preview of Unfold AI on a long answer">
+        <div class="demo-summary"><small>LOCAL EXTRACTIVE SUMMARY</small><strong>Measure latency and total cost before choosing a model.</strong><p>4 min full read · 5 sections · 3 actions</p></div>
+        <div class="demo-map"><header>Answer Map <span>5</span></header><button class="active">01 · Choose a model</button><button>02 · Evaluate quality</button><button>03 · Control costs</button><button>04 · Ship safely</button><button>05 · Monitor rollout</button></div>
+      </div>
+    </section>
+    <section class="steps"><article><b>01</b><h2>Open a supported AI chat</h2><p>ChatGPT, Claude, Gemini, Grok, Perplexity, DeepSeek, or Manus.</p></article><article><b>02</b><h2>Let the answer finish</h2><p>Long answers unfold automatically. Short answers remain untouched.</p></article><article><b>03</b><h2>Navigate and save</h2><p>Jump to a section, reveal more, or save exact source text locally.</p></article></section>
+    <section class="setup"><div><p class="eyebrow">OPTIONAL CHROME UPGRADE</p><h2>Use Chrome’s on-device AI model</h2><p id="model-status">Unfold already works with its deterministic local summary. If Chrome supports its built-in model, you can prepare it for future answers.</p></div><button id="prepare-model" type="button">Check on-device model</button></section>
+    <footer><button id="finish" type="button">Start using Unfold AI <span>→</span></button><p>No signup · no cloud processing · change settings anytime</p></footer>
+  </main>
+  <script type="module" src="./onboarding.ts"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import type { SavedRepository } from "../core/saved/savedRepository";
-import { validateSavedInsightInput } from "../core/saved/validation";
+import { validateSavedInsight, validateSavedInsightInput } from "../core/saved/validation";
 
 export type ExtensionResponse =
   | { ok: true; data?: unknown }
@@ -51,6 +51,10 @@ export async function routeMessage(
         return { ok: true };
       case "saved:clear":
         await repository.clear();
+        return { ok: true };
+      case "saved:replace":
+        if (!Array.isArray(message.insights)) throw new Error("Saved insight backup is invalid");
+        await repository.replaceAll(message.insights.map(validateSavedInsight));
         return { ok: true };
       default:
         throw new Error("Unsupported extension message");

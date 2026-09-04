@@ -1,5 +1,5 @@
 import type { SavedInsight, SavedInsightInput } from "./types";
-import { validateSavedInsightInput } from "./validation";
+import { validateSavedInsight, validateSavedInsightInput } from "./validation";
 
 const STORE_NAME = "insights";
 const DEFAULT_MAX_ESTIMATED_BYTES = 5 * 1024 * 1024;
@@ -19,6 +19,7 @@ export interface SavedRepository {
   updateNote(id: string, note: string): Promise<SavedInsight>;
   delete(id: string): Promise<void>;
   clear(): Promise<void>;
+  replaceAll(insights: SavedInsight[]): Promise<void>;
 }
 
 function requestResult<T>(request: IDBRequest<T>): Promise<T> {
@@ -154,6 +155,22 @@ export function createSavedRepository(options: RepositoryOptions = {}): SavedRep
       try {
         const transaction = database.transaction(STORE_NAME, "readwrite");
         transaction.objectStore(STORE_NAME).clear();
+        await transactionComplete(transaction);
+      } finally {
+        database.close();
+      }
+    },
+    async replaceAll(insights: SavedInsight[]): Promise<void> {
+      const validated = insights.map(validateSavedInsight);
+      if (estimateContentBytes(validated) > maximumBytes) {
+        throw new Error("Saved insights storage limit reached");
+      }
+      const database = await openDatabase();
+      try {
+        const transaction = database.transaction(STORE_NAME, "readwrite");
+        const store = transaction.objectStore(STORE_NAME);
+        store.clear();
+        validated.forEach((insight) => store.put(insight));
         await transactionComplete(transaction);
       } finally {
         database.close();

@@ -60,5 +60,9 @@
       "48":  "icons/icon48.png",
       "128": "icons/icon128.png"
     }
+  },
+  "options_ui": {
+    "page": "src/onboarding/onboarding.html",
+    "open_in_tab": true
   }
 }

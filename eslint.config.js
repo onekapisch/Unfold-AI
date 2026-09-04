@@ -11,7 +11,9 @@ export default tseslint.config(
     files: ["src/**/*.ts", "scripts/**/*.mjs", "vite*.ts"],
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ["vite*.ts", "scripts/*.mjs"],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -20,6 +22,19 @@ export default tseslint.config(
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-misused-promises": "error",
       "no-console": ["error", { "allow": ["warn", "error"] }]
+    },
+  },
+  {
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: { console: "readonly", process: "readonly" },
+    },
+    rules: { "no-console": "off" },
+  },
+  {
+    files: ["vite*.ts"],
+    languageOptions: {
+      globals: { __dirname: "readonly", process: "readonly" },
     },
   },
 );

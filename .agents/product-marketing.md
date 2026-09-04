@@ -67,6 +67,7 @@
 **Tone:** Calm, direct, precise.
 **Style:** Plain verbs, truthful labels, minimal promotion.
 **Personality:** Focused, trustworthy, intelligent, restrained.
+**Official mark:** Dimensional folded “U” with mapped answer layers on a sunrise-coral field; use consistently across the extension and store assets.
 
 ## Proof Points
 

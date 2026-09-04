@@ -17,6 +17,7 @@
 - Waits until generation finishes and leaves short answers untouched.
 - Removed the unverified broad `x.com` permission; Grok support is limited to `grok.com`.
 - Release packaging now uses an explicit production allowlist.
+- Replaced the legacy reader glyph with the folded Unfold “U” across Chrome, Firefox, product UI, and all store artwork; added the high-contrast sunrise-coral icon field.
 
 ### Security
 

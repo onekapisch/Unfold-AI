@@ -53,6 +53,8 @@ Release archives are written to `release/`. Store publication is manual and requ
 
 Store artwork is in `assets/store/`. Rebuild the deterministic capture preview with `npm run build:preview`; the preview is excluded from both release archives.
 
+The canonical official icon is `assets/brand/unfold-app-icon.png`. Chrome and Firefox use its 16, 32, 48, and 128 px derivatives from `public/icons/`; the 512 px derivative is retained for high-resolution listings and future surfaces. Store screenshots and promotional images use the same mark.
+
 ## Privacy
 
 Conversation content is processed in the active tab. A section enters extension-owned IndexedDB only when the user explicitly saves it. See [SECURITY.md](SECURITY.md) and `public/privacy.html`.

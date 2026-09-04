@@ -30,9 +30,11 @@ Unfold AI is a local-first Chrome and Firefox extension that summarizes and maps
 - Signal blue `#557FE4`
 - Reading blue `#EEF4FF`
 - Mint `#4BC8A0`
+- Official icon background: sunrise coral `#FF5A52` through apricot `#FFA36B`
 - DM Sans for interface copy, DM Serif Display for limited editorial moments, JetBrains Mono for code and counts
 - Inline reading UI is restrained; glass surfaces are limited to popup and overlays.
 - Preserve visible focus, reduced motion, forced colors, 200% zoom, and 375px behavior.
+- Use `assets/brand/unfold-app-icon.png` as the canonical brand mark; derive browser sizes from it and never introduce a competing app icon.
 
 ## Code rules
 

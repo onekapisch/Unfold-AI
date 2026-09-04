@@ -2,7 +2,7 @@ import { buildAnswerMap } from "../src/core/answer-map/buildAnswerMap";
 import { buildSemanticDocument } from "../src/core/document/semanticDocument";
 import { summarizeExtractively } from "../src/core/summary/extractiveSummary";
 import { mountAnswerExperience } from "../src/content/ui/answerExperience";
-import brandArtwork from "../assets/brand/unfold-paper-map.png";
+import brandArtwork from "../assets/brand/unfold-app-icon.png";
 
 const stage = document.getElementById("stage");
 const shot = Number.parseInt(new URLSearchParams(location.search).get("shot") ?? "1", 10);

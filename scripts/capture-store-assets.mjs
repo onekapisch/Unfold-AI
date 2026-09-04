@@ -31,7 +31,8 @@ const base = `http://127.0.0.1:${address.port}`;
 
 async function capture(url, output, width, height) {
   await run(chromePath, [
-    "--headless=new", "--no-first-run", "--hide-scrollbars", `--window-size=${width},${height}`,
+    "--headless=new", "--no-first-run", "--hide-scrollbars", "--force-prefers-reduced-motion",
+    "--run-all-compositor-stages-before-draw", "--virtual-time-budget=1500", `--window-size=${width},${height}`,
     `--screenshot=${output}`, url,
   ]);
 }

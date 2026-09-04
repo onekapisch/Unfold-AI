@@ -19,6 +19,8 @@ export default defineConfig({
       input: {
         background: resolve(__dirname, "src/background/background-mv2.ts"),
         popup: resolve(__dirname, "src/popup/popup.html"),
+        onboarding: resolve(__dirname, "src/onboarding/onboarding.html"),
+        saved: resolve(__dirname, "src/saved/saved.html"),
       },
       output: {
         entryFileNames: (chunk) => {

@@ -15,10 +15,7 @@ export class GrokAdapter extends BaseAdapter {
   id = "grok";
 
   matches(url: URL): boolean {
-    if (url.hostname === "grok.com" || url.hostname.endsWith(".grok.com")) return true;
-    // Grok is also embedded at x.com/i/grok — match ONLY that path, never all of x.com.
-    if (url.hostname === "x.com" && url.pathname.startsWith("/i/grok")) return true;
-    return false;
+    return url.hostname === "grok.com" || url.hostname.endsWith(".grok.com");
   }
 
   findAssistantMessages(root: Document | HTMLElement): HTMLElement[] {

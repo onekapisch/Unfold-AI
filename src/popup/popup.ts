@@ -1,167 +1,92 @@
-import { loadSettings, saveSettings } from "@core/state/storage";
-import { SHORTCUT_LABELS } from "../content/shortcuts";
-import type { GlobalSettings, PresetId } from "@core/types";
+import { loadSettings, saveSettings } from "../core/state/storage";
+import type { GlobalSettings, PresetId } from "../core/types";
+import { webExtension } from "../platform/webExtension";
 
-const PROVIDERS: Array<{ id: string; label: string }> = [
-  { id: "chatgpt",    label: "ChatGPT"    },
-  { id: "claude",     label: "Claude"     },
-  { id: "gemini",     label: "Gemini"     },
-  { id: "grok",       label: "Grok"       },
-  { id: "perplexity", label: "Perplexity" },
-  { id: "deepseek",   label: "DeepSeek"   },
-  { id: "manus",      label: "Manus"      },
+const PROVIDERS: Array<[string, string]> = [
+  ["chatgpt", "ChatGPT"], ["claude", "Claude"], ["gemini", "Gemini"],
+  ["grok", "Grok"], ["perplexity", "Perplexity"], ["deepseek", "DeepSeek"], ["manus", "Manus"],
 ];
 
-const isMac = ((navigator as any).userAgentData?.platform ?? navigator.platform ?? "").includes("Mac");
-
-async function init() {
-  const settings = await loadSettings();
-
-  bindMasterToggle(settings);
-  renderProviders(settings);
-  bindPreset(settings);
-  bindRevealWords(settings);
-  renderShortcuts();
-  bindKbToggle(settings);
-  bindThreshold(settings);
-  renderVersion();
-  applyEnabledState(settings.enabled);
+function required<T extends HTMLElement>(id: string): T {
+  const node = document.getElementById(id);
+  if (!node) throw new Error(`Missing popup element: ${id}`);
+  return node as T;
 }
 
-// ── Master on/off toggle ─────────────────────────────────────────────
-function bindMasterToggle(settings: GlobalSettings) {
-  const toggle  = document.getElementById("master-toggle")  as HTMLInputElement;
-  const statusEl = document.getElementById("master-status")!;
-
-  toggle.checked = settings.enabled;
-  updateMasterUI(settings.enabled, statusEl);
-
-  toggle.addEventListener("change", async () => {
-    settings.enabled = toggle.checked;
-    await saveSettings(settings);
-    updateMasterUI(settings.enabled, statusEl);
-    applyEnabledState(settings.enabled);
-  });
+function persist(settings: GlobalSettings): void {
+  void saveSettings(settings);
 }
 
-function updateMasterUI(enabled: boolean, statusEl: HTMLElement) {
-  statusEl.textContent = enabled ? "Active" : "Paused";
-  statusEl.className   = enabled ? "master-status active" : "master-status paused";
-
-  const dot = document.getElementById("status-dot");
-  if (dot) dot.className = enabled ? "status-dot on" : "status-dot off";
+function setEnabledPresentation(enabled: boolean): void {
+  required<HTMLElement>("status-title").textContent = enabled ? "Ready for long answers" : "Paused on every site";
+  document.body.classList.toggle("is-paused", !enabled);
 }
 
-/** Dim the settings body when the extension is globally disabled. */
-function applyEnabledState(enabled: boolean) {
-  const body = document.getElementById("settings-body");
-  if (body) body.style.opacity = enabled ? "" : "0.4";
-}
-
-// ── Version ──────────────────────────────────────────────────────────
-function renderVersion() {
-  const el = document.getElementById("version");
-  if (!el) return;
-  try {
-    // Prefer browser.* (Firefox native); fall back to chrome.* (Chrome/Arc/Dia).
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const api = (globalThis as any).browser ?? (typeof chrome !== "undefined" ? chrome : undefined);
-    const v = api?.runtime?.getManifest?.()?.version;
-    if (v) el.textContent = `v${v}`;
-  } catch {
-    // Not in extension context (dev preview)
-  }
-}
-
-// ── Providers ────────────────────────────────────────────────────────
-function renderProviders(settings: GlobalSettings) {
-  const host = document.getElementById("providers")!;
-  for (const p of PROVIDERS) {
+function renderProviders(settings: GlobalSettings): void {
+  const host = required<HTMLElement>("providers");
+  host.replaceChildren(...PROVIDERS.map(([id, name]) => {
     const label = document.createElement("label");
-    const cb    = document.createElement("input");
-    cb.type    = "checkbox";
-    cb.checked = settings.enabledProviders[p.id] ?? true;
-    cb.addEventListener("change", async () => {
-      settings.enabledProviders[p.id] = cb.checked;
-      await saveSettings(settings);
+    const text = document.createElement("span");
+    text.textContent = name;
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.checked = settings.enabledProviders[id] ?? true;
+    input.addEventListener("change", () => {
+      settings.enabledProviders[id] = input.checked;
+      persist(settings);
     });
-    const span = document.createElement("span");
-    span.textContent = p.label;
-    label.append(cb, span);
-    host.appendChild(label);
+    label.append(text, input);
+    return label;
+  }));
+}
+
+async function init(): Promise<void> {
+  const settings = await loadSettings();
+  const isFirefox = typeof browser !== "undefined" && Boolean(browser.runtime);
+  required<HTMLElement>("built-in-row").hidden = isFirefox;
+  const enabled = required<HTMLInputElement>("enabled");
+  enabled.checked = settings.enabled;
+  setEnabledPresentation(settings.enabled);
+  enabled.addEventListener("change", () => {
+    settings.enabled = enabled.checked;
+    setEnabledPresentation(settings.enabled);
+    persist(settings);
+  });
+
+  document.querySelectorAll<HTMLButtonElement>("[data-preset]").forEach((control) => {
+    const preset = control.dataset.preset as PresetId;
+    control.setAttribute("aria-pressed", String(settings.defaultPreset === preset));
+    control.addEventListener("click", () => {
+      settings.defaultPreset = preset;
+      document.querySelectorAll<HTMLElement>("[data-preset]").forEach((item) => {
+        item.setAttribute("aria-pressed", String(item === control));
+      });
+      persist(settings);
+    });
+  });
+
+  const bindings: Array<[string, keyof Pick<GlobalSettings, "autoUnfold" | "preferBuiltInSummary" | "keyboardShortcuts">]> = [
+    ["auto-unfold", "autoUnfold"], ["built-in", "preferBuiltInSummary"], ["keyboard", "keyboardShortcuts"],
+  ];
+  for (const [id, key] of bindings) {
+    const input = required<HTMLInputElement>(id);
+    input.checked = settings[key];
+    input.addEventListener("change", () => { settings[key] = input.checked; persist(settings); });
   }
-}
 
-// ── Reading preset ───────────────────────────────────────────────────
-function bindPreset(settings: GlobalSettings) {
-  const sel = document.getElementById("preset") as HTMLSelectElement;
-  sel.value = settings.defaultPreset;
-  sel.addEventListener("change", async () => {
-    settings.defaultPreset = sel.value as PresetId;
-    await saveSettings(settings);
+  const threshold = required<HTMLInputElement>("threshold");
+  threshold.value = String(settings.lengthThreshold);
+  threshold.addEventListener("change", () => {
+    const candidate = Number.parseInt(threshold.value, 10);
+    settings.lengthThreshold = Number.isFinite(candidate) ? Math.max(60, Math.min(1200, candidate)) : 220;
+    threshold.value = String(settings.lengthThreshold);
+    persist(settings);
   });
-}
+  renderProviders(settings);
 
-// ── Words per reveal slider ──────────────────────────────────────────
-function bindRevealWords(settings: GlobalSettings) {
-  const slider   = document.getElementById("reveal-words") as HTMLInputElement;
-  const valLabel = document.getElementById("reveal-words-val")!;
-  slider.value = String(settings.revealWords);
-  valLabel.textContent = `${settings.revealWords} words`;
-
-  slider.addEventListener("input", () => {
-    valLabel.textContent = `${slider.value} words`;
-  });
-  slider.addEventListener("change", async () => {
-    settings.revealWords = parseInt(slider.value, 10);
-    await saveSettings(settings);
-  });
-}
-
-// ── Keyboard shortcuts display ───────────────────────────────────────
-function renderShortcuts() {
-  const host = document.getElementById("shortcuts")!;
-  for (const s of SHORTCUT_LABELS) {
-    const row = document.createElement("div");
-    row.className = "shortcut-row";
-
-    const lbl = document.createElement("span");
-    lbl.textContent = s.action;
-
-    const keys = document.createElement("div");
-    keys.className = "kbd-group";
-    const combo = isMac ? s.mac : s.win;
-    for (const key of combo.split(" ")) {
-      const kbd = document.createElement("kbd");
-      kbd.textContent = key;
-      keys.appendChild(kbd);
-    }
-
-    row.append(lbl, keys);
-    host.appendChild(row);
-  }
-}
-
-function bindKbToggle(settings: GlobalSettings) {
-  const toggle = document.getElementById("kb-toggle") as HTMLInputElement;
-  toggle.checked = settings.keyboardShortcuts;
-  toggle.addEventListener("change", async () => {
-    settings.keyboardShortcuts = toggle.checked;
-    await saveSettings(settings);
-  });
-}
-
-// ── Activation threshold ─────────────────────────────────────────────
-function bindThreshold(settings: GlobalSettings) {
-  const input = document.getElementById("threshold") as HTMLInputElement;
-  input.value = String(settings.lengthThreshold);
-  input.addEventListener("change", async () => {
-    const v = parseInt(input.value, 10);
-    if (!Number.isFinite(v)) return;
-    settings.lengthThreshold = Math.max(60, Math.min(1200, v));
-    input.value = String(settings.lengthThreshold);
-    await saveSettings(settings);
-  });
+  required<HTMLElement>("version").textContent = `v${webExtension.getManifestVersion() ?? "2.0.0"}`;
+  required<HTMLButtonElement>("open-saved").addEventListener("click", () => { void webExtension.openExtensionPage("src/saved/saved.html"); });
+  required<HTMLButtonElement>("open-guide").addEventListener("click", () => { void webExtension.openExtensionPage("src/onboarding/onboarding.html"); });
 }
 
 void init();

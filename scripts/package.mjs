@@ -1,27 +1,16 @@
-/**
- * scripts/package.mjs
- * Creates a CWS-ready zip at dist/layered-ai-reader-vX.Y.Z.zip
- * Run via: npm run package
- */
-import { readFileSync } from "fs";
-import { resolve, join, relative } from "path";
+import { mkdirSync, readFileSync, rmSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { spawnSync } from "node:child_process";
 
-const ROOT = resolve(import.meta.dirname, "..");
-const DIST = join(ROOT, "dist");
-const pkg  = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
-const OUT  = join(DIST, `layered-ai-reader-v${pkg.version}.zip`);
+const root = resolve(import.meta.dirname, "..");
+const dist = join(root, "dist");
+const release = join(root, "release");
+const packageJson = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+const output = join(release, `unfold-ai-chrome-v${packageJson.version}.zip`);
+const allowlist = ["manifest.json", "background.js", "content.js", "privacy.html", "icons", "assets", "chunks", "src"];
 
-// Simple zip using Node's built-ins (no extra deps)
-// We use the native `zip` CLI which is available on macOS/Linux.
-import { execSync } from "child_process";
-
-// Exclude source maps from the release zip
-const EXCLUDE = ["*.map", "manifest-firefox.json"];
-
-const excludeFlags = EXCLUDE.map((p) => `--exclude='${p}'`).join(" ");
-const cmd = `cd "${DIST}" && zip -r "${OUT}" . ${excludeFlags}`;
-
-console.log(`\nPackaging v${pkg.version}…`);
-execSync(cmd, { stdio: "inherit" });
-console.log(`\n✅  Created: ${relative(ROOT, OUT)}\n`);
-console.log(`Upload this file at: https://chrome.google.com/webstore/devconsole\n`);
+mkdirSync(release, { recursive: true });
+rmSync(output, { force: true });
+const result = spawnSync("zip", ["-q", "-r", output, ...allowlist], { cwd: dist, stdio: "inherit" });
+if (result.status !== 0) throw new Error("Chrome archive creation failed");
+console.log(`Created ${output}`);

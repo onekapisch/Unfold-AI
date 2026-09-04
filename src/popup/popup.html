@@ -4,86 +4,47 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Unfold AI</title>
+    <link rel="icon" href="../../icons/icon16.png" />
     <link rel="stylesheet" href="./popup.css" />
   </head>
   <body>
-    <main class="wrap">
-
-      <header>
-        <div class="brand">
-          <div class="brand-mark" aria-hidden="true">
-            <img src="../../icons/icon32.png" width="20" height="20" alt="" />
-          </div>
-          <div class="brand-text">
-            <h1>Unfold AI</h1>
-            <p class="tagline">Read output at your pace</p>
-          </div>
-        </div>
-
-        <!-- Master on/off toggle -->
-        <label class="master-toggle" id="master-toggle-label" aria-label="Enable Unfold AI">
-          <input type="checkbox" id="master-toggle" />
-          <span class="master-track">
-            <span class="master-thumb"></span>
-          </span>
-          <span class="master-status" id="master-status">Active</span>
-        </label>
+    <main class="panel">
+      <header class="topbar">
+        <div class="brand"><img src="../../icons/icon32.png" width="30" height="30" alt="" /><div><h1>Unfold AI</h1><p>Summarize · Map · Save</p></div></div>
+        <label class="switch"><span class="sr-only">Enable Unfold AI</span><input id="enabled" type="checkbox" /><span></span></label>
       </header>
 
-      <!-- All settings are wrapped so they can be dimmed when disabled -->
-      <div id="settings-body">
+      <section class="status-card">
+        <div class="status-row"><span class="pulse"></span><strong id="status-title">Ready for long answers</strong><span id="version"></span></div>
+        <p>Answers stay in your browser. No account, cloud API, or conversation tracking.</p>
+      </section>
 
-        <section>
-          <h2>Providers</h2>
-          <div id="providers" class="list"></div>
-        </section>
+      <section>
+        <div class="section-title"><h2>Reading depth</h2><span>Applied to new answers</span></div>
+        <div class="segments" role="radiogroup" aria-label="Reading depth">
+          <button type="button" data-preset="focus">Focus<small>1 section</small></button>
+          <button type="button" data-preset="balanced">Balanced<small>2 sections</small></button>
+          <button type="button" data-preset="full">Full context<small>Everything</small></button>
+        </div>
+      </section>
 
-        <section>
-          <h2>Reading preset</h2>
-          <select id="preset">
-            <option value="quick">Quick Scan — compact chunks</option>
-            <option value="standard">Standard — balanced</option>
-            <option value="deep">Deep Dive — larger chunks</option>
-          </select>
-        </section>
+      <section class="settings">
+        <label><span><strong>Auto-unfold long answers</strong><small>Summary and Answer Map after generation</small></span><input id="auto-unfold" type="checkbox" /></label>
+        <label id="built-in-row"><span><strong>On-device AI summary</strong><small>Use Chrome’s local model when ready</small></span><input id="built-in" type="checkbox" /></label>
+        <label><span><strong>Keyboard controls</strong><small>Modifier + arrow keys near an answer</small></span><input id="keyboard" type="checkbox" /></label>
+      </section>
 
-        <section>
-          <h2>Words per reveal</h2>
-          <div class="slider-wrap">
-            <input id="reveal-words" type="range" min="60" max="320" step="20" />
-            <div class="slider-labels">
-              <span>Compact</span>
-              <span id="reveal-words-val"></span>
-              <span>Generous</span>
-            </div>
-          </div>
-          <p class="hint">How many words to show each time you click "Show next".</p>
-        </section>
+      <details>
+        <summary>Sites and activation</summary>
+        <div id="providers" class="providers"></div>
+        <label class="threshold"><span>Minimum answer length</span><input id="threshold" type="number" min="60" max="1200" step="20" /><em>words</em></label>
+      </details>
 
-        <section>
-          <h2>Keyboard shortcuts</h2>
-          <div class="shortcuts-list" id="shortcuts"></div>
-          <label class="shortcut-toggle">
-            <input id="kb-toggle" type="checkbox" />
-            <span>Enable keyboard shortcuts</span>
-          </label>
-        </section>
-
-        <section>
-          <h2>Activation threshold</h2>
-          <input id="threshold" type="number" min="60" max="1200" step="20" />
-          <p class="hint">Answers shorter than this many words are left untouched.</p>
-        </section>
-
-      </div><!-- /settings-body -->
-
-      <footer>
-        <span class="status-dot on" id="status-dot"></span>
-        <span id="footer-status">Local only &middot; no data leaves your browser</span>
-        <a class="privacy-link" href="../../privacy.html" target="_blank">Privacy</a>
-        <span class="version" id="version"></span>
-      </footer>
-
+      <div class="actions">
+        <button id="open-saved" class="primary" type="button">Open Saved insights</button>
+        <button id="open-guide" type="button">How it works</button>
+      </div>
+      <footer><span><i></i> Local-only by design</span><a href="../../privacy.html" target="_blank">Privacy</a></footer>
     </main>
     <script type="module" src="./popup.ts"></script>
   </body>

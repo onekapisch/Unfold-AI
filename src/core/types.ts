@@ -1,6 +1,7 @@
 // Shared, provider-agnostic types for Layered AI Reader.
 
-export type PresetId = "quick" | "standard" | "deep";
+export type PresetId = "focus" | "balanced" | "full";
+export type ChunkPresetId = PresetId | "quick" | "standard" | "deep";
 
 export type BlockKind =
   | "heading"
@@ -25,6 +26,25 @@ export interface SemanticBlock {
   atomic: boolean;
 }
 
+/** A navigable group of source blocks. No generated text is stored here. */
+export interface SemanticSection {
+  id: string;
+  index: number;
+  title: string;
+  blocks: SemanticBlock[];
+  words: number;
+}
+
+/** Provider-neutral representation of one rendered assistant answer. */
+export interface SemanticDocument {
+  answerId: string;
+  sections: SemanticSection[];
+  blocks: SemanticBlock[];
+  plainText: string;
+  wordCount: number;
+  contentHash: string;
+}
+
 /** A chunk is a contiguous run of semantic blocks revealed together. */
 export interface Chunk {
   index: number;
@@ -40,15 +60,31 @@ export interface ChunkPlan {
   contentHash: string;
 }
 
-export interface SummaryResult {
-  /** Short bottom-line sentence. */
+export type SummaryEngineKind = "built-in" | "extractive";
+
+export interface SummaryOutput {
+  engine: SummaryEngineKind;
   bottomLine: string;
-  /** Optional key points (bullets) extracted heuristically. */
   keyPoints: string[];
-  /** Estimated read time in seconds for the full message. */
   readTimeSec: number;
-  /** Counts of notable block kinds for badges. */
-  badges: { code: number; table: number; list: number };
+  counts: {
+    sections: number;
+    actions: number;
+    sources: number;
+    code: number;
+  };
+}
+
+export type MapEntryKind = "outline" | "action" | "source" | "code";
+
+export interface AnswerMapEntry {
+  id: string;
+  kind: MapEntryKind;
+  sectionId: string;
+  label: string;
+  searchText: string;
+  sourceEl: HTMLElement;
+  href?: string;
 }
 
 export interface GlobalSettings {
@@ -56,15 +92,16 @@ export interface GlobalSettings {
   enabled: boolean;
   enabledProviders: Record<string, boolean>;
   defaultPreset: PresetId;
-  autoCollapse: boolean;
   /** Word count threshold above which a message is considered "long". */
   lengthThreshold: number;
-  /** Words revealed per "Show next" click. Overrides preset's chunkWords. */
-  revealWords: number;
-  revealMode: "chunk" | "full";
-  codeBlockMode: "preserve" | "collapse-separately";
   /** Whether keyboard shortcuts are active. */
   keyboardShortcuts: boolean;
+  /** Whether completed long answers transform automatically. */
+  autoUnfold: boolean;
+  /** Prefer Chrome's built-in local model when it is available. */
+  preferBuiltInSummary: boolean;
+  /** Persisted settings schema used for safe migrations. */
+  schemaVersion: 2;
 }
 
 export interface MessageState {
@@ -103,17 +140,19 @@ export const DEFAULT_SETTINGS: GlobalSettings = {
     perplexity: true,
     deepseek: true,
   },
-  defaultPreset: "standard",
-  autoCollapse: true,
+  defaultPreset: "balanced",
+  autoUnfold: true,
   lengthThreshold: 220,
-  revealWords: 150,
-  revealMode: "chunk",
-  codeBlockMode: "preserve",
   keyboardShortcuts: true,
+  preferBuiltInSummary: true,
+  schemaVersion: 2,
 };
 
-export const PRESET_CHUNK_TARGETS: Record<PresetId, { initialChunks: number; chunkWords: number }> = {
+export const PRESET_CHUNK_TARGETS: Record<ChunkPresetId, { initialChunks: number; chunkWords: number }> = {
   quick: { initialChunks: 1, chunkWords: 90 },
   standard: { initialChunks: 2, chunkWords: 140 },
   deep: { initialChunks: 4, chunkWords: 180 },
+  focus: { initialChunks: 1, chunkWords: 110 },
+  balanced: { initialChunks: 2, chunkWords: 160 },
+  full: { initialChunks: 9999, chunkWords: 220 },
 };

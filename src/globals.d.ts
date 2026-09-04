@@ -12,6 +12,23 @@ interface WindowOrWorkerGlobalScope {
   Summarizer?: import("./core/summary/summaryEngine").BuiltInSummarizerFactory;
 }
 
-declare var Summarizer:
+declare const Summarizer:
   | import("./core/summary/summaryEngine").BuiltInSummarizerFactory
   | undefined;
+
+interface ExtendableEvent extends Event {
+  waitUntil(promise: Promise<unknown>): void;
+}
+
+interface ServiceWorkerGlobalScope {
+  skipWaiting(): Promise<void>;
+  clients: { claim(): Promise<void> };
+}
+
+declare const browser: {
+  runtime: {
+    onMessage: {
+      addListener(listener: (message: unknown) => Promise<unknown>): void;
+    };
+  };
+};

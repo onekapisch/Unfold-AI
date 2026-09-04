@@ -34,7 +34,9 @@ interface SummaryEngineOptions {
 }
 
 function globalBuiltInFactory(): BuiltInSummarizerFactory | undefined {
-  const candidate = globalThis.Summarizer;
+  const candidate = (globalThis as typeof globalThis & {
+    Summarizer?: BuiltInSummarizerFactory;
+  }).Summarizer;
   return candidate && typeof candidate.availability === "function" ? candidate : undefined;
 }
 

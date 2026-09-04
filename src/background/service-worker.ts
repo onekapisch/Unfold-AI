@@ -1,15 +1,20 @@
-// MV3 service worker.
-// Must call skipWaiting + clients.claim or Chrome flags the extension as
-// "waiting to activate" and shows an error under Manage Extensions.
+import { createSavedRepository } from "../core/saved/savedRepository";
+import { routeMessage } from "./messageRouter";
+
+const repository = createSavedRepository();
+const worker = self as unknown as ServiceWorkerGlobalScope;
 
 self.addEventListener("install", (event) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (event as any).waitUntil((self as any).skipWaiting());
+  (event as ExtendableEvent).waitUntil(worker.skipWaiting());
 });
 
 self.addEventListener("activate", (event) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (event as any).waitUntil((self as any).clients.claim());
+  (event as ExtendableEvent).waitUntil(worker.clients.claim());
+});
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  void routeMessage(message, repository).then(sendResponse);
+  return true;
 });
 
 export {};

@@ -70,6 +70,21 @@ export interface SummaryResult {
   badges: { code: number; table: number; list: number };
 }
 
+export type SummaryEngineKind = "built-in" | "extractive";
+
+export interface SummaryOutput {
+  engine: SummaryEngineKind;
+  bottomLine: string;
+  keyPoints: string[];
+  readTimeSec: number;
+  counts: {
+    sections: number;
+    actions: number;
+    sources: number;
+    code: number;
+  };
+}
+
 export interface GlobalSettings {
   /** Master switch — when false the extension does nothing on any page. */
   enabled: boolean;

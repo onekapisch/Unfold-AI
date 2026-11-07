@@ -236,7 +236,7 @@ No. It is deliberately narrower: a reading and navigation layer for the answer a
 
 ## Feedback and compatibility reports
 
-Provider compatibility reports, accessibility reports, and focused feature proposals are welcome. Start with an [issue](https://github.com/onekapisch/Unfold-AI/issues) so the behavior and privacy boundary are clear. A source license will be published before external code contributions are accepted.
+Provider compatibility reports, accessibility reports, and focused feature proposals are welcome. Start with an [issue](https://github.com/onekapisch/Unfold-AI/issues) so the behavior and privacy boundary are clear. Unfold AI is licensed under the [MIT License](LICENSE), the same license its Firefox Add-ons listing declares.
 
 When reporting a provider issue, include:
 

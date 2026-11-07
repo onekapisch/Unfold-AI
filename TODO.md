@@ -11,5 +11,4 @@
 - Export Chrome Web Store uninstalls by day and operating system.
 - Review aggregate acquisition and installed-user changes after 30 days.
 - Prioritize provider fixes from reproducible support reports.
-- Choose and publish a source license before accepting external code contributions.
 - Add opt-in aggregate feature telemetry only if a future privacy review approves it; never collect conversation content.

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Published the MIT License (LICENSE), matching the license declared on Firefox Add-ons.
+
 ## 2.0.0 — 2026-09-04
 
 ### Added

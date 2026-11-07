@@ -15,7 +15,7 @@
 ![No account](https://img.shields.io/badge/account-not%20required-2E9D78)
 ![No telemetry](https://img.shields.io/badge/telemetry-none-2E9D78)
 
-**[Add to Chrome](https://chromewebstore.google.com/detail/unfold-ai-ai-output-contr/bmaehlmglmcpgokdlbniifhgnfgajfkl) · [Add to Firefox](https://addons.mozilla.org/firefox/addon/unfold-ai-ai-output-controller/) · [See how it works](#your-answer-unfolded) · [Privacy](#privacy-by-architecture) · [Report an issue](https://github.com/onekapisch/Unfold-AI/issues)**
+**[Add to Chrome](https://chromewebstore.google.com/detail/unfold-ai-ai-output-contr/bmaehlmglmcpgokdlbniifhgnfgajfkl) · [Add to Firefox](https://addons.mozilla.org/firefox/addon/unfold-ai-ai-output-controller/) · [See how it works](#your-answer-unfolded) · [Privacy](#privacy-by-architecture) · [Report an issue](https://github.com/onekapisch/Unfold-AI/issues) · [Product page](https://www.onekapisch.com/products/unfold-ai/)**
 
 <img src="assets/store/promos/marquee-1400x560.png" width="100%" alt="Unfold AI — Long AI answers, made navigable. Summarize, map, save, private on device.">
 
@@ -248,7 +248,7 @@ When reporting a provider issue, include:
 ## More from Kapisch
 
 - **[Mac 4 Breakfast](https://github.com/onekapisch/Mac-4-Breakfast)** — battery health, live power, devices, and Smart Alerts in one native Mac app.
-- **[Tokens 4 Breakfast](https://github.com/onekapisch/Tokens4Breakfast-daily)** — AI token usage, subscriptions, spend, and rate-limit pressure from the menu bar.
+- **[Tokens 4 Breakfast](https://github.com/onekapisch/Tokens-4-Breakfast)** — AI token usage, subscriptions, spend, and rate-limit pressure from the menu bar.
 - **[Clip 4 Breakfast](https://github.com/onekapisch/clip-4-breakfast-public)** — a private, keyboard-first clipboard manager built around Recall, Keep, Transform, and Deliver.
 
 ---

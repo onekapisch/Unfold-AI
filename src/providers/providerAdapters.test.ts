@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+/// <reference types="node" />
 
 import { beforeEach, describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
